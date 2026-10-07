@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>90-Day CISSP Challenge</title>
+<link rel="stylesheet" href="/styles.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b4f9c'/%3E%3Ctext x='16' y='22' font-size='16' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='700'%3E90%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<header class="topbar">
+  <div class="inner">
+    <div class="brand">
+      <span class="box">90</span>
+      <span class="title">CISSP Challenge<small>90-day study tracker</small></span>
+    </div>
+    <nav class="tabs" id="tabs">
+      <button class="tab active" data-view="today">Today</button>
+      <button class="tab" data-view="plan">12-Week Plan</button>
+      <button class="tab" data-view="checkpoints">Checkpoints</button>
+      <button class="tab" data-view="exams">Practice Exams</button>
+    </nav>
+    <div class="status" id="saveStatus" title="Save status">●</div>
+  </div>
+</header>
+
+<main class="page">
+
+  <!-- ===== Dashboard strip (always visible) ===== -->
+  <section class="dash">
+    <div class="card stat">
+      <div class="label">Day</div>
+      <div class="big"><span id="dayNum">—</span><small>/ 90</small></div>
+      <div class="sub" id="dayDate">Set a start date to begin</div>
+    </div>
+    <div class="card stat">
+      <div class="label">Tasks completed</div>
+      <div class="big"><span id="pctDone">0</span><small>%</small></div>
+      <div class="bar"><div class="fill" id="barDone"></div></div>
+    </div>
+    <div class="card stat">
+      <div class="label">Practice questions</div>
+      <div class="big"><span id="qDone">0</span><small>/ 2,000</small></div>
+      <div class="bar"><div class="fill alt" id="barQ"></div></div>
+    </div>
+    <div class="card stat">
+      <div class="label">Study hours logged</div>
+      <div class="big"><span id="hDone">0</span><small>/ 135 h</small></div>
+      <div class="bar"><div class="fill alt2" id="barH"></div></div>
+    </div>
+    <div class="card stat">
+      <div class="label">Start date</div>
+      <input type="date" id="startDate" aria-label="Challenge start date">
+      <div class="sub">Exam target: <strong id="examDate">—</strong></div>
+    </div>
+  </section>
+
+  <!-- ===== Today ===== -->
+  <section class="view" id="view-today">
+    <div class="grid2">
+      <div class="card">
+        <h2 id="todayTitle">Today</h2>
+        <p class="muted" id="todayDomain"></p>
+        <ul class="tasks" id="todayTasks"></ul>
+        <div class="row">
+          <label>Questions worked today
+            <input type="number" min="0" max="1000" id="todayQ" class="qinput">
+          </label>
+        </div>
+        <label class="notes">Notes / acronyms to remember
+          <textarea id="todayNotes" rows="4" placeholder="BIA → identifies critical functions; RTO ≤ MTD …"></textarea>
+        </label>
+      </div>
+      <div class="card">
+        <h2>This week's focus</h2>
+        <div id="weekFocus"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Why this cadence works</h2>
+      <ul class="plain">
+        <li><strong>~135 hours total</strong>, 1.5–2 h/day, six days a week — the most-recommended CISSP cadence for working professionals.</li>
+        <li><strong>Weeks 1–10</strong> domain study · <strong>Week 11</strong> full-exam practice + remediation · <strong>Week 12</strong> review, rest, exam.</li>
+        <li><strong>Three weekly checkpoints</strong> (Wed quiz, Sat timed block, Sun review) prevent slippage.</li>
+        <li><strong>Most failed attempts</strong> share one pattern: too much reading, not enough question-bank practice. Target 2,000+ questions.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===== Plan ===== -->
+  <section class="view hidden" id="view-plan">
+    <div id="weeks"></div>
+  </section>
+
+  <!-- ===== Checkpoints ===== -->
+  <section class="view hidden" id="view-checkpoints">
+    <div class="grid3" id="checkpointCards"></div>
+    <div class="card">
+      <h2>Checkpoint completion by week</h2>
+      <div class="tablewrap">
+        <table id="checkpointTable">
+          <thead><tr><th>Week</th><th>Wed quiz</th><th>Sat timed block</th><th>Sun review</th><th>Questions</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Exams ===== -->
+  <section class="view hidden" id="view-exams">
+    <div class="card">
+      <h2>Week 11 practice exams — score by domain (%)</h2>
+      <p class="muted">Aim for 75 %+ in every domain. Any domain under 70 % is highlighted: push the exam back 1–2 weeks and address it.</p>
+      <div class="tablewrap">
+        <table id="examTable">
+          <thead><tr><th>Domain</th><th>Weight</th><th>Exam #1</th><th>Exam #2</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="row">
+        <div class="pill" id="exam1Avg">Exam #1 avg: —</div>
+        <div class="pill" id="exam2Avg">Exam #2 avg: —</div>
+        <div class="pill warn hidden" id="examWarn">⚠ A domain is under 70 % — consider delaying the exam</div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Materials assumed by this plan</h2>
+      <ul class="plain" id="materials"></ul>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  Progress is saved on the server (<code>/api/progress</code>) and mirrored to this browser. Health: <code>/healthz</code>.
+</footer>
+
+<script src="/app.js"></script>
+</body>
+</html>

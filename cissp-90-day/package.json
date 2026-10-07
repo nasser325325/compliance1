@@ -1,0 +1,15 @@
+{
+  "name": "cissp-90-day",
+  "version": "1.0.0",
+  "description": "90-Day CISSP Challenge study tracker — zero-dependency Node.js web server",
+  "main": "server.js",
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test.js"
+  },
+  "license": "MIT"
+}
