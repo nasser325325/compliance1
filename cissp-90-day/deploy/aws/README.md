@@ -133,7 +133,7 @@ Open `https://<that-url>/`. TLS certificate, renewals and scaling are handled fo
 > progress resets on redeploy. The tracker also mirrors progress to your browser's
 > localStorage and re-uploads the newer copy on load, so a single-user setup still
 > keeps its data. For strict durability use Route A (progress lives in
-> `/var/lib/cissp-90-day/progress.json`) or back the data dir with EFS on ECS.
+> `/var/lib/cissp-90-day/cissp-tracker.xlsx`) or back the data dir with EFS on ECS.
 
 ### Tear down
 

@@ -6,33 +6,40 @@
  * Zero-dependency Node.js server (built-ins only) so it runs the same on a
  * laptop, an AWS EC2 / Azure VM / GCE instance, or any container platform.
  *
- *   GET  /              tracker UI
- *   GET  /api/plan      the 90-day plan (read-only)
- *   GET  /api/progress  saved progress
- *   PUT  /api/progress  save progress (JSON body, max 256 KB)
- *   GET  /healthz       liveness probe for load balancers / Cloud Run / App Service
+ *   GET  /                  tracker UI
+ *   GET  /api/plan          the 90-day plan (read-only)
+ *   GET  /api/progress      saved progress (read from the Excel workbook)
+ *   PUT  /api/progress      save progress (JSON body, max 256 KB) → written to the workbook
+ *   GET  /api/export.xlsx   download the Excel database
+ *   GET  /api/info          server info: LAN addresses for opening on a phone, data file path
+ *   GET  /healthz           liveness probe for load balancers / Cloud Run / App Service
  *
  * Environment variables
  *   PORT          listen port            (default 8080)
  *   HOST          bind address           (default 0.0.0.0)
- *   DATA_DIR      where progress.json is written (default ./data)
+ *   DATA_DIR      where cissp-tracker.xlsx is written (default ./data)
  *   APP_PASSWORD  if set, HTTP Basic auth is required (user: any, pass: this)
+ *   PUBLIC_URL    optional: the public address to show under "open from anywhere"
  */
 
 const http = require('http');
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 const crypto = require('crypto');
 
 const PLAN = require('./plan');
+const { Store, emptyProgress } = require('./store');
 
 const PORT = Number(process.env.PORT) || 8080;
 const HOST = process.env.HOST || '0.0.0.0';
 const DATA_DIR = path.resolve(process.env.DATA_DIR || path.join(__dirname, 'data'));
-const PROGRESS_FILE = path.join(DATA_DIR, 'progress.json');
 const PUBLIC_DIR = path.join(__dirname, 'public');
 const APP_PASSWORD = process.env.APP_PASSWORD || '';
+const PUBLIC_URL = process.env.PUBLIC_URL || '';
 const MAX_BODY = 256 * 1024;
+
+const store = new Store(DATA_DIR);
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -100,24 +107,17 @@ function authorized(req) {
   return timingSafeEqual(pass, APP_PASSWORD);
 }
 
-function emptyProgress() {
-  return { startDate: null, done: {}, questions: {}, scores: {}, notes: {}, updatedAt: null };
-}
-
 function loadProgress() {
   try {
-    const raw = fs.readFileSync(PROGRESS_FILE, 'utf8');
-    return { ...emptyProgress(), ...JSON.parse(raw) };
-  } catch {
+    return store.load();
+  } catch (e) {
+    console.error('[cissp-90-day] could not read workbook, starting empty:', e.message);
     return emptyProgress();
   }
 }
 
 function saveProgress(obj) {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
-  const tmp = PROGRESS_FILE + '.tmp';
-  fs.writeFileSync(tmp, JSON.stringify(obj, null, 2));
-  fs.renameSync(tmp, PROGRESS_FILE); // atomic replace
+  store.save(obj);
 }
 
 function isPlainObject(v) {
@@ -125,9 +125,10 @@ function isPlainObject(v) {
 }
 
 /** Whitelist the shape of what we persist so a client cannot store arbitrary junk. */
-function sanitizeProgress(input) {
+function sanitizeProgress(input, previous = emptyProgress()) {
   if (!isPlainObject(input)) throw Object.assign(new Error('body must be an object'), { status: 400 });
   const out = emptyProgress();
+  const now = new Date().toISOString();
 
   if (input.startDate !== null && input.startDate !== undefined) {
     if (typeof input.startDate !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(input.startDate)) {
@@ -138,7 +139,10 @@ function sanitizeProgress(input) {
 
   const done = isPlainObject(input.done) ? input.done : {};
   for (const [k, v] of Object.entries(done)) {
-    if (/^\d{1,2}:\d$/.test(k) && v === true) out.done[k] = true;
+    if (/^\d{1,2}:\d$/.test(k) && v === true) {
+      out.done[k] = true;
+      out.completedAt[k] = previous.completedAt?.[k] || now; // keep the original tick time
+    }
   }
 
   const questions = isPlainObject(input.questions) ? input.questions : {};
@@ -158,8 +162,33 @@ function sanitizeProgress(input) {
     if (/^\d{1,2}$/.test(k) && typeof v === 'string') out.notes[k] = v.slice(0, 4000);
   }
 
-  out.updatedAt = new Date().toISOString();
+  out.updatedAt = now;
   return out;
+}
+
+/** Non-loopback IPv4 addresses, so the UI can show "open this on your phone". */
+function lanAddresses() {
+  const out = [];
+  for (const [name, addrs] of Object.entries(os.networkInterfaces())) {
+    for (const a of addrs || []) {
+      if (a.family === 'IPv4' && !a.internal) out.push({ iface: name, address: a.address });
+    }
+  }
+  return out;
+}
+
+function serverInfo(req) {
+  const hostHeader = req.headers.host || `localhost:${PORT}`;
+  const proto = (req.headers['x-forwarded-proto'] || '').split(',')[0] || 'http';
+  return {
+    hostname: os.hostname(),
+    port: PORT,
+    currentUrl: `${proto}://${hostHeader}/`,
+    lanUrls: lanAddresses().map((a) => `http://${a.address}:${PORT}/`),
+    publicUrl: PUBLIC_URL || null,
+    authEnabled: Boolean(APP_PASSWORD),
+    database: { type: 'xlsx', file: store.file, exists: fs.existsSync(store.file) },
+  };
 }
 
 function serveStatic(req, res, urlPath) {
@@ -189,6 +218,22 @@ async function handle(req, res) {
   }
 
   if (p === '/api/plan' && req.method === 'GET') return send(res, 200, PLAN);
+  if (p === '/api/info' && req.method === 'GET') return send(res, 200, serverInfo(req));
+
+  if (p === '/api/export.xlsx' && req.method === 'GET') {
+    try {
+      const buf = store.exportBuffer();
+      securityHeaders(res);
+      res.writeHead(200, {
+        'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'Content-Disposition': `attachment; filename="cissp-tracker-${new Date().toISOString().slice(0, 10)}.xlsx"`,
+        'Content-Length': buf.length,
+      });
+      return res.end(buf);
+    } catch (e) {
+      return send(res, 500, { error: e.message });
+    }
+  }
 
   if (p === '/api/progress') {
     if (req.method === 'GET') return send(res, 200, loadProgress());
@@ -200,7 +245,7 @@ async function handle(req, res) {
         return send(res, e.status || 400, { error: e.status ? e.message : 'invalid JSON' });
       }
       try {
-        const clean = sanitizeProgress(body);
+        const clean = sanitizeProgress(body, loadProgress());
         saveProgress(clean);
         return send(res, 200, clean);
       } catch (e) {
@@ -228,7 +273,9 @@ server.headersTimeout = 10_000;
 server.requestTimeout = 30_000;
 
 server.listen(PORT, HOST, () => {
-  console.log(`[cissp-90-day] listening on http://${HOST}:${PORT}  data=${DATA_DIR}  auth=${APP_PASSWORD ? 'basic' : 'off'}`);
+  console.log(`[cissp-90-day] listening on http://${HOST}:${PORT}  db=${store.file}  auth=${APP_PASSWORD ? 'basic' : 'off'}`);
+  for (const a of lanAddresses()) console.log(`[cissp-90-day] on this network: http://${a.address}:${PORT}/  (${a.iface})`);
+  if (PUBLIC_URL) console.log(`[cissp-90-day] public: ${PUBLIC_URL}`);
 });
 
 for (const sig of ['SIGINT', 'SIGTERM']) {

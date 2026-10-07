@@ -2,7 +2,29 @@
   'use strict';
 
   const LS_KEY = 'cissp90.progress';
+  const THEME_KEY = 'cissp90.theme';
   const DAY_MS = 86400000;
+
+  // ---------- night mode ----------
+  // Cycle: auto (follow the OS) → dark → light. Applied before first paint to avoid a flash.
+  const THEMES = ['auto', 'dark', 'light'];
+  const THEME_ICON = { auto: '🌗', dark: '🌙', light: '☀️' };
+  const THEME_LABEL = { auto: 'Auto (follows your device)', dark: 'Night mode', light: 'Day mode' };
+  function applyTheme(t) {
+    if (t === 'auto') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', t);
+    const b = document.getElementById('themeBtn');
+    if (b) { b.textContent = THEME_ICON[t]; b.title = `${THEME_LABEL[t]} — click to switch`; }
+  }
+  function currentTheme() {
+    try { const t = localStorage.getItem(THEME_KEY); return THEMES.includes(t) ? t : 'auto'; } catch { return 'auto'; }
+  }
+  applyTheme(currentTheme());
+  document.getElementById('themeBtn').addEventListener('click', () => {
+    const next = THEMES[(THEMES.indexOf(currentTheme()) + 1) % THEMES.length];
+    try { localStorage.setItem(THEME_KEY, next); } catch { /* ignore */ }
+    applyTheme(next);
+  });
 
   let plan = null;
   let progress = { startDate: null, done: {}, questions: {}, scores: {}, notes: {} };
@@ -273,7 +295,27 @@
     $('#materials').replaceChildren(...plan.materials.map((m) => el('li', { text: m })));
   }
 
-  function renderAll() { renderDash(); renderToday(); renderPlan(); renderCheckpoints(); renderExams(); }
+  async function renderAccess() {
+    $('#dbUpdated').textContent = progress.updatedAt ? new Date(progress.updatedAt).toLocaleString() : 'not yet';
+    let info;
+    try { info = await fetch('/api/info').then((r) => r.json()); } catch { $('#accessHelp').textContent = 'Server info unavailable.'; return; }
+    $('#dbFile').textContent = info.database.file;
+    $('#urlCurrent').textContent = info.currentUrl;
+    $('#urlLan').replaceChildren(info.lanUrls.length
+      ? el('ul', {}, ...info.lanUrls.map((u) => el('li', {}, el('a', { href: u, text: u }))))
+      : 'no LAN address detected');
+    $('#urlPublic').replaceChildren(info.publicUrl
+      ? el('a', { href: info.publicUrl, text: info.publicUrl })
+      : el('span', { class: 'muted', text: 'not configured — see the three options below' }));
+    $('#authState').textContent = info.authEnabled
+      ? 'password required (APP_PASSWORD is set) ✓'
+      : 'no password — set APP_PASSWORD before exposing this server to the internet';
+    $('#accessHelp').textContent = info.lanUrls.length
+      ? 'On your phone, join the same Wi-Fi and open one of the LAN links. If it does not load, allow port ' + info.port + ' through the desktop firewall.'
+      : '';
+  }
+
+  function renderAll() { renderDash(); renderToday(); renderPlan(); renderCheckpoints(); renderExams(); renderAccess(); }
 
   // ---------- wiring ----------
 

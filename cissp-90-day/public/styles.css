@@ -20,8 +20,11 @@
   --sans: "Segoe UI", "Inter", -apple-system, BlinkMacSystemFont, Tahoma, Arial, sans-serif;
 }
 
+/* Night mode. Applied when the user picks it (data-theme="dark"), or when the OS
+   prefers dark and the user has not forced day mode (no data-theme="light"). */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
+    --brand: #1f6fd0;
     --bg: #10111a;
     --surface: #1a1c2b;
     --surface-alt: #232538;
@@ -34,8 +37,29 @@
     --amber-bg: #3a2c10;
     --red-bg: #3a1a15;
     --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 18px rgba(0, 0, 0, 0.35);
+    color-scheme: dark;
   }
 }
+:root[data-theme="dark"] {
+  --brand: #1f6fd0;
+  --bg: #10111a;
+  --surface: #1a1c2b;
+  --surface-alt: #232538;
+  --border: #333652;
+  --ink: #eef0fb;
+  --ink-soft: #b7bbd6;
+  --ink-faint: #8489a8;
+  --brand-light: #1c2a44;
+  --green-bg: #123626;
+  --amber-bg: #3a2c10;
+  --red-bg: #3a1a15;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 18px rgba(0, 0, 0, 0.35);
+  color-scheme: dark;
+}
+:root[data-theme="dark"] .topbar, :root[data-theme="dark"] .fill { background: #164a8f; }
+:root[data-theme="dark"] .fill.alt { background: var(--green); }
+:root[data-theme="dark"] .fill.alt2 { background: var(--amber); }
+:root[data-theme="dark"] .tag.study { color: #8fb8f0; }
 
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
@@ -56,6 +80,8 @@ code { background: var(--surface-alt); padding: 1px 5px; border-radius: 4px; fon
 .tab { background: transparent; border: 0; color: rgba(255,255,255,.8); padding: 8px 12px; border-radius: 6px; cursor: pointer; white-space: nowrap; }
 .tab:hover { background: rgba(255,255,255,.12); color: #fff; }
 .tab.active { background: rgba(255,255,255,.2); color: #fff; font-weight: 600; }
+.themebtn { background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.35); color: #fff; width: 34px; height: 34px; border-radius: 8px; cursor: pointer; font-size: 16px; line-height: 1; flex: none; }
+.themebtn:hover { background: rgba(255,255,255,.25); }
 .status { font-size: 18px; color: #9be7b4; }
 .status.saving { color: #ffd37a; }
 .status.error { color: #ff8a80; }
@@ -148,5 +174,14 @@ table input[type=number] { width: 70px; padding: 4px 6px; border: 1px solid var(
 
 .cp { margin: 0; }
 .cp .mins { font-size: 12px; color: var(--ink-faint); }
+
+/* ---------- data & access ---------- */
+table.kv th { width: 130px; font-size: 12.5px; text-transform: none; letter-spacing: 0; color: var(--ink-soft); vertical-align: top; }
+table.kv td { word-break: break-all; }
+table.kv ul { margin: 0; padding-left: 16px; }
+.btn { display: inline-block; background: var(--brand); color: #fff; text-decoration: none; padding: 8px 14px; border-radius: 6px; font-weight: 600; font-size: 13.5px; }
+.btn:hover { filter: brightness(1.1); }
+.help { font-size: 13px; color: var(--ink-soft); margin-top: 8px; }
+.steps li { margin: 8px 0; }
 
 .foot { text-align: center; color: var(--ink-faint); font-size: 12px; padding: 10px 16px 30px; }

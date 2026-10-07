@@ -9,11 +9,14 @@ tracker, plus step-by-step instructions to run it on **AWS**, **Azure** and
 cissp-90-day/
 ├── server.js            zero-dependency Node.js web server + JSON API
 ├── plan.js              the 90-day plan as data (13 weeks, 90 days, every task)
+├── store.js             Excel-backed database (data/cissp-tracker.xlsx)
+├── xlsx-lite.js         tiny .xlsx reader/writer built on Node's zlib (no npm packages)
 ├── public/              tracker UI (index.html, styles.css, app.js)
 ├── test.js              smoke test (npm test)
 ├── Dockerfile           container image for App Runner / Container Apps / Cloud Run
 └── deploy/
     ├── cloud-init.sh    one bootstrap script that works on all three clouds' VMs
+    ├── tunnel.sh        expose the desktop server to your phone via a free Cloudflare tunnel
     ├── aws/             deploy-ec2.sh + README (EC2 and App Runner)
     ├── azure/           deploy-vm.sh  + README (VM and Container Apps)
     └── gcp/             deploy-gce.sh + README (Compute Engine and Cloud Run)
@@ -32,9 +35,53 @@ cissp-90-day/
 - **Dashboard** — day N of 90, % tasks done, questions toward 2,000, hours toward
   135, and the computed exam date (Saturday of week 12).
 
+- **Data & Access** — where the Excel database lives, a download button for it,
+  and the addresses to open the tracker from your phone or another computer.
+- **Night mode** — the moon/sun button in the header cycles Auto (follows your
+  device) → Night → Day. The choice is remembered per browser.
+
 Progress is saved on the server (`PUT /api/progress`) and mirrored to the browser's
 localStorage; whichever copy is newer wins on load, so a flaky connection never
 loses a tick.
+
+## The Excel database
+
+The server's only data store is a real workbook, `data/cissp-tracker.xlsx`,
+written atomically on every save and read back on every load. No npm packages:
+`xlsx-lite.js` builds and parses the file with Node's built-in zlib.
+
+| Sheet | Columns |
+|-------|---------|
+| Settings | Key, Value (`start_date`, `updated_at`) |
+| Tasks | Day, Week, DayName, TaskNo, Task, Minutes, Type, **Done**, CompletedAt — all 90 days pre-filled |
+| Questions | Day, Week, Questions |
+| Scores | Exam, DomainCode, Domain, Score |
+| Notes | Day, Note |
+
+Because every day and task is already a row, the workbook works as a checklist on
+its own: open it in Excel, set **Done** to `TRUE` (or `yes`, `x`, `1`), type a
+note or a score, save, and the web app shows the change on its next load. The
+**Download Excel workbook** button on the Data & Access tab fetches the current
+file; a v1 `progress.json` is migrated into the workbook automatically.
+
+## Opening it when you are away from your desktop
+
+The Data & Access tab shows the live addresses. Three options, from simplest to
+most private:
+
+1. **Cloud server** — deploy with any script in `deploy/` (Step 3 below). You get
+   a permanent public URL. Always set `APP_PASSWORD`.
+2. **Tunnel from your desktop** — keep `node server.js` running at home and run
+   `deploy/tunnel.sh`. It prints a public `https://….trycloudflare.com` link that
+   forwards to your desktop while the script runs. Needs `cloudflared` installed
+   (the script tells you how) and `APP_PASSWORD` set on the server.
+3. **Private network** — install Tailscale on the desktop and your phone. The
+   LAN address shown on the Data & Access tab then works from anywhere, and no
+   port is opened to the internet.
+
+Same Wi-Fi only? Open the LAN address the tab lists (also printed when the
+server starts). If it does not load, allow the port through the desktop firewall.
+Set `PUBLIC_URL=https://your-address` on the server to show it on that tab.
 
 ## The plan baked in
 
@@ -70,8 +117,9 @@ Requires Node.js 18+. No `npm install` — there are no dependencies.
 |----------|---------|---------|
 | `PORT` | `8080` | listen port |
 | `HOST` | `0.0.0.0` | bind address |
-| `DATA_DIR` | `./data` | where `progress.json` is written |
+| `DATA_DIR` | `./data` | where `cissp-tracker.xlsx` is written |
 | `APP_PASSWORD` | *(empty)* | if set, HTTP Basic auth is required (any username) |
+| `PUBLIC_URL` | *(empty)* | public address to show on the Data & Access tab |
 
 ## Step 2 — Run it in a container
 

@@ -7,7 +7,7 @@ ENV NODE_ENV=production \
     DATA_DIR=/data
 
 WORKDIR /app
-COPY package.json server.js plan.js ./
+COPY package.json server.js plan.js store.js xlsx-lite.js ./
 COPY public ./public
 
 # Run as the unprivileged user that ships with the node image; /data is the persistence volume.

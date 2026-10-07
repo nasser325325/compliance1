@@ -19,7 +19,9 @@
       <button class="tab" data-view="plan">12-Week Plan</button>
       <button class="tab" data-view="checkpoints">Checkpoints</button>
       <button class="tab" data-view="exams">Practice Exams</button>
+      <button class="tab" data-view="access">Data &amp; Access</button>
     </nav>
+    <button class="themebtn" id="themeBtn" title="Switch between night mode, day mode and auto" aria-label="Toggle night mode">🌙</button>
     <div class="status" id="saveStatus" title="Save status">●</div>
   </div>
 </header>
@@ -129,10 +131,47 @@
     </div>
   </section>
 
+  <!-- ===== Data & Access ===== -->
+  <section class="view hidden" id="view-access">
+    <div class="grid2">
+      <div class="card">
+        <h2>Excel database</h2>
+        <p class="muted">Everything you tick here is written to an Excel workbook on the server. Open it in Excel to see all 90 days, tick tasks there, and the web app picks the changes up on next load.</p>
+        <table class="kv">
+          <tr><th>File</th><td><code id="dbFile">—</code></td></tr>
+          <tr><th>Sheets</th><td>Settings · Tasks · Questions · Scores · Notes</td></tr>
+          <tr><th>Last saved</th><td id="dbUpdated">—</td></tr>
+        </table>
+        <div class="row">
+          <a class="btn" href="/api/export.xlsx" download>⬇ Download Excel workbook</a>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Open from your phone or another computer</h2>
+        <p class="muted">Any device that can reach this server can use the tracker. Progress lives on the server, so every device sees the same ticks.</p>
+        <table class="kv">
+          <tr><th>This device</th><td><code id="urlCurrent">—</code></td></tr>
+          <tr><th>Same Wi-Fi / LAN</th><td id="urlLan">—</td></tr>
+          <tr><th>From anywhere</th><td id="urlPublic">—</td></tr>
+          <tr><th>Login</th><td id="authState">—</td></tr>
+        </table>
+        <div id="accessHelp" class="help"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Three ways to reach it when you are away from your desktop</h2>
+      <ol class="plain steps">
+        <li><strong>Cloud server (recommended).</strong> Deploy with one of the scripts in <code>deploy/aws</code>, <code>deploy/azure</code> or <code>deploy/gcp</code>. You get a permanent public address. Set <code>APP_PASSWORD</code> so only you can log in.</li>
+        <li><strong>Tunnel from your desktop (free, 1 minute).</strong> Keep the server running at home and run <code>deploy/tunnel.sh</code>. It opens a public <code>https://…trycloudflare.com</code> link that forwards to this app for as long as the tunnel runs. Set <code>APP_PASSWORD</code> first.</li>
+        <li><strong>Private network (most secure).</strong> Install Tailscale (or any VPN) on the desktop and your phone; then the LAN address above works from anywhere, with no port open to the internet.</li>
+      </ol>
+    </div>
+  </section>
+
 </main>
 
 <footer class="foot">
-  Progress is saved on the server (<code>/api/progress</code>) and mirrored to this browser. Health: <code>/healthz</code>.
+  Progress is saved to the server's Excel workbook (<code>/api/progress</code>) and mirrored to this browser. Health: <code>/healthz</code>.
 </footer>
 
 <script src="/app.js"></script>

@@ -109,7 +109,7 @@ gcloud run services update cissp-90-day --region us-central1 \
   --add-volume-mount volume=data,mount-path=/data
 ```
 
-The server writes `progress.json` to `/data`, which is now backed by the bucket
+The server writes `cissp-tracker.xlsx` to `/data`, which is now backed by the bucket
 and survives redeploys. Without this step the browser-side mirror still keeps a
 single user's progress.
 
