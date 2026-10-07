@@ -1,0 +1,11 @@
+# Netlify: publish the CISSP tracker folder as the site root.
+# Connect this repo on app.netlify.com (or drag the cissp/ folder onto Netlify Drop).
+[build]
+  publish = "cissp"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "no-referrer"

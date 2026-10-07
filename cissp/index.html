@@ -3,9 +3,200 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="CISSP 90">
+<meta name="theme-color" content="#0b4f9c">
 <title>90-Day CISSP Challenge</title>
-<link rel="stylesheet" href="styles.css">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b4f9c'/%3E%3Ctext x='16' y='22' font-size='16' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='700'%3E90%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b4f9c'/%3E%3Ctext x='16' y='22' font-size='16' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='700'%3E90%3C/text%3E%3C/svg%3E">
+<style>
+:root {
+  --brand: #0b4f9c;
+  --brand-dark: #083a73;
+  --brand-light: #e6eef9;
+  --green: #1a8f4b;
+  --green-bg: #e5f6ec;
+  --amber: #b0791f;
+  --amber-bg: #fbf0dc;
+  --red: #c0392b;
+  --red-bg: #fbe6e3;
+  --bg: #f5f6fa;
+  --surface: #fff;
+  --surface-alt: #f0f1f7;
+  --border: #dde0ea;
+  --ink: #171a2b;
+  --ink-soft: #565b73;
+  --ink-faint: #8a8fa3;
+  --shadow: 0 1px 2px rgba(20, 22, 60, 0.06), 0 4px 14px rgba(20, 22, 60, 0.05);
+  --radius: 10px;
+  --sans: "Segoe UI", "Inter", -apple-system, BlinkMacSystemFont, Tahoma, Arial, sans-serif;
+}
+
+/* Night mode. Applied when the user picks it (data-theme="dark"), or when the OS
+   prefers dark and the user has not forced day mode (no data-theme="light"). */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --brand: #1f6fd0;
+    --bg: #10111a;
+    --surface: #1a1c2b;
+    --surface-alt: #232538;
+    --border: #333652;
+    --ink: #eef0fb;
+    --ink-soft: #b7bbd6;
+    --ink-faint: #8489a8;
+    --brand-light: #1c2a44;
+    --green-bg: #123626;
+    --amber-bg: #3a2c10;
+    --red-bg: #3a1a15;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 18px rgba(0, 0, 0, 0.35);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --brand: #1f6fd0;
+  --bg: #10111a;
+  --surface: #1a1c2b;
+  --surface-alt: #232538;
+  --border: #333652;
+  --ink: #eef0fb;
+  --ink-soft: #b7bbd6;
+  --ink-faint: #8489a8;
+  --brand-light: #1c2a44;
+  --green-bg: #123626;
+  --amber-bg: #3a2c10;
+  --red-bg: #3a1a15;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 18px rgba(0, 0, 0, 0.35);
+  color-scheme: dark;
+}
+:root[data-theme="dark"] .topbar, :root[data-theme="dark"] .fill { background: #164a8f; }
+:root[data-theme="dark"] .fill.alt { background: var(--green); }
+:root[data-theme="dark"] .fill.alt2 { background: var(--amber); }
+:root[data-theme="dark"] .tag.study { color: #8fb8f0; }
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--ink); font-family: var(--sans); line-height: 1.45; -webkit-font-smoothing: antialiased; }
+button, input, select, textarea { font-family: inherit; font-size: 14px; color: inherit; }
+code { background: var(--surface-alt); padding: 1px 5px; border-radius: 4px; font-size: 12.5px; }
+.hidden { display: none !important; }
+.muted { color: var(--ink-soft); font-size: 13.5px; margin: 4px 0 12px; }
+
+/* ---------- top bar ---------- */
+.topbar { background: var(--brand); color: #fff; position: sticky; top: 0; z-index: 40; box-shadow: var(--shadow); }
+.topbar .inner { max-width: 1200px; margin: 0 auto; padding: 0 16px; display: flex; align-items: center; gap: 20px; height: 58px; }
+.brand { display: flex; align-items: center; gap: 10px; flex: none; }
+.brand .box { width: 32px; height: 32px; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.4); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; border-radius: 6px; }
+.brand .title { font-weight: 600; font-size: 15px; white-space: nowrap; line-height: 1.1; }
+.brand .title small { display: block; font-weight: 400; font-size: 10.5px; opacity: .78; }
+.tabs { display: flex; gap: 2px; flex: 1; overflow-x: auto; }
+.tab { background: transparent; border: 0; color: rgba(255,255,255,.8); padding: 8px 12px; border-radius: 6px; cursor: pointer; white-space: nowrap; }
+.tab:hover { background: rgba(255,255,255,.12); color: #fff; }
+.tab.active { background: rgba(255,255,255,.2); color: #fff; font-weight: 600; }
+.themebtn { background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.35); color: #fff; width: 34px; height: 34px; border-radius: 8px; cursor: pointer; font-size: 16px; line-height: 1; flex: none; }
+.themebtn:hover { background: rgba(255,255,255,.25); }
+.status { font-size: 18px; color: #9be7b4; }
+.status.saving { color: #ffd37a; }
+.status.error { color: #ff8a80; }
+
+/* ---------- layout ---------- */
+.page { max-width: 1200px; margin: 0 auto; padding: 20px 16px 40px; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 16px 18px; margin-bottom: 16px; }
+.card h2 { margin: 0 0 6px; font-size: 16px; }
+.grid2 { display: grid; grid-template-columns: 1.3fr 1fr; gap: 16px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+@media (max-width: 860px) { .grid2, .grid3 { grid-template-columns: 1fr; } }
+
+/* ---------- dashboard ---------- */
+.dash { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 20px; }
+@media (max-width: 1000px) { .dash { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 520px) { .dash { grid-template-columns: 1fr; } }
+.stat { margin: 0; padding: 14px 16px; }
+.stat .label { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-faint); }
+.stat .big { font-size: 30px; font-weight: 700; line-height: 1.2; margin: 2px 0 4px; }
+.stat .big small { font-size: 13px; font-weight: 400; color: var(--ink-soft); margin-left: 4px; }
+.stat .sub { font-size: 12.5px; color: var(--ink-soft); }
+.stat input[type=date] { width: 100%; padding: 6px 8px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface-alt); margin: 4px 0 6px; }
+.bar { height: 8px; background: var(--surface-alt); border-radius: 99px; overflow: hidden; margin-top: 6px; }
+.fill { height: 100%; width: 0; background: var(--brand); transition: width .3s; }
+.fill.alt { background: var(--green); }
+.fill.alt2 { background: var(--amber); }
+
+/* ---------- tasks ---------- */
+.tasks { list-style: none; margin: 0 0 12px; padding: 0; }
+.tasks li { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px dashed var(--border); }
+.tasks li:last-child { border-bottom: 0; }
+.tasks input[type=checkbox] { width: 18px; height: 18px; margin-top: 2px; flex: none; accent-color: var(--brand); }
+.tasks .text { flex: 1; }
+.tasks .done .text { text-decoration: line-through; color: var(--ink-faint); }
+.tag { font-size: 11px; padding: 2px 7px; border-radius: 99px; background: var(--surface-alt); color: var(--ink-soft); white-space: nowrap; }
+.tag.study { background: var(--brand-light); color: var(--brand); }
+.tag.quiz { background: var(--amber-bg); color: var(--amber); }
+.tag.exam { background: var(--red-bg); color: var(--red); }
+.tag.review { background: var(--green-bg); color: var(--green); }
+.row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 10px 0; }
+.qinput { width: 90px; padding: 6px 8px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface-alt); margin-left: 8px; }
+.notes { display: block; font-size: 13px; color: var(--ink-soft); }
+.notes textarea { display: block; width: 100%; margin-top: 4px; padding: 8px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface-alt); resize: vertical; color: var(--ink); }
+.plain { margin: 8px 0 0; padding-left: 18px; }
+.plain li { margin: 4px 0; }
+
+/* ---------- plan ---------- */
+.week { margin-bottom: 14px; }
+.week summary { cursor: pointer; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; list-style: none; }
+.week summary::-webkit-details-marker { display: none; }
+.week .wk { font-weight: 700; color: var(--brand); min-width: 70px; }
+.week .dom { font-weight: 600; flex: 1; }
+.week .diff { font-size: 11px; padding: 2px 8px; border-radius: 99px; font-weight: 600; text-transform: uppercase; letter-spacing: .03em; }
+.diff.hard { background: var(--red-bg); color: var(--red); }
+.diff.easy { background: var(--green-bg); color: var(--green); }
+.diff.core { background: var(--brand-light); color: var(--brand); }
+.diff.exam { background: var(--amber-bg); color: var(--amber); }
+.diff.buffer { background: var(--surface-alt); color: var(--ink-soft); }
+.week .wprog { font-size: 12px; color: var(--ink-soft); min-width: 60px; text-align: right; }
+.week .body { margin-top: 12px; display: grid; grid-template-columns: 1fr 1.4fr; gap: 16px; }
+@media (max-width: 860px) { .week .body { grid-template-columns: 1fr; } }
+.week .focus ul { padding-left: 18px; margin: 6px 0; }
+.week .focus li { margin: 3px 0; font-size: 13.5px; }
+.acros { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+.acros span { font-size: 11px; background: var(--surface-alt); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; font-family: monospace; }
+.days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+@media (max-width: 700px) { .days { grid-template-columns: repeat(2, 1fr); } }
+.dayc { border: 1px solid var(--border); border-radius: 8px; padding: 8px; background: var(--surface-alt); font-size: 12px; }
+.dayc.today { outline: 2px solid var(--brand); }
+.dayc.complete { background: var(--green-bg); }
+.dayc .dh { font-weight: 700; display: flex; justify-content: space-between; margin-bottom: 4px; }
+.dayc .dh small { font-weight: 400; color: var(--ink-faint); }
+.dayc label { display: flex; gap: 5px; align-items: flex-start; margin: 3px 0; cursor: pointer; }
+.dayc input[type=checkbox] { accent-color: var(--brand); margin-top: 1px; flex: none; }
+.dayc .qline { margin-top: 6px; display: flex; align-items: center; gap: 4px; color: var(--ink-soft); }
+.dayc .qline input { width: 52px; padding: 2px 4px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface); font-size: 12px; }
+
+/* ---------- tables ---------- */
+.tablewrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+th, td { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: left; }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: .03em; color: var(--ink-faint); }
+td.ok { color: var(--green); font-weight: 600; }
+td.miss { color: var(--ink-faint); }
+td.low { background: var(--red-bg); }
+td.good { background: var(--green-bg); }
+table input[type=number] { width: 70px; padding: 4px 6px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface-alt); }
+.pill { padding: 6px 12px; border-radius: 99px; background: var(--surface-alt); font-size: 13px; font-weight: 600; }
+.pill.warn { background: var(--red-bg); color: var(--red); }
+
+.cp { margin: 0; }
+.cp .mins { font-size: 12px; color: var(--ink-faint); }
+
+
+.foot { text-align: center; color: var(--ink-faint); font-size: 12px; padding: 10px 16px 30px; }
+
+/* ---------- toast ---------- */
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translate(-50%, 80px); opacity: 0; background: var(--ink); color: var(--bg); padding: 10px 18px; border-radius: 10px; font-size: 13.5px; font-weight: 600; z-index: 999; transition: all .3s; box-shadow: var(--shadow); max-width: 90vw; }
+.toast.show { transform: translate(-50%, 0); opacity: 1; }
+.toast.error { background: var(--red); color: #fff; }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 </head>
 <body>
 <header class="topbar">
@@ -19,16 +210,14 @@
       <button class="tab" data-view="plan">12-Week Plan</button>
       <button class="tab" data-view="checkpoints">Checkpoints</button>
       <button class="tab" data-view="exams">Practice Exams</button>
-      <button class="tab" data-view="access">Data &amp; Access</button>
     </nav>
     <button class="themebtn" id="themeBtn" title="Switch between night mode, day mode and auto" aria-label="Toggle night mode">🌙</button>
-    <div class="status" id="saveStatus" title="Save status">●</div>
+    <div class="status" id="saveStatus" title="Sync status">●</div>
   </div>
 </header>
 
 <main class="page">
 
-  <!-- ===== Dashboard strip (always visible) ===== -->
   <section class="dash">
     <div class="card stat">
       <div class="label">Day</div>
@@ -57,7 +246,6 @@
     </div>
   </section>
 
-  <!-- ===== Today ===== -->
   <section class="view" id="view-today">
     <div class="grid2">
       <div class="card">
@@ -89,12 +277,10 @@
     </div>
   </section>
 
-  <!-- ===== Plan ===== -->
   <section class="view hidden" id="view-plan">
     <div id="weeks"></div>
   </section>
 
-  <!-- ===== Checkpoints ===== -->
   <section class="view hidden" id="view-checkpoints">
     <div class="grid3" id="checkpointCards"></div>
     <div class="card">
@@ -108,7 +294,6 @@
     </div>
   </section>
 
-  <!-- ===== Exams ===== -->
   <section class="view hidden" id="view-exams">
     <div class="card">
       <h2>Week 11 practice exams — score by domain (%)</h2>
@@ -131,63 +316,401 @@
     </div>
   </section>
 
-  <!-- ===== Data & Access ===== -->
-  <section class="view hidden" id="view-access">
-    <div class="grid2">
-      <div class="card">
-        <h2>Excel database</h2>
-        <p class="muted" id="dbIntro">Everything you tick is stored in an Excel workbook: Settings · Tasks · Questions · Scores · Notes, with all 90 days pre-filled. Open it in Excel, tick tasks or type notes there, and import it back.</p>
-        <table class="kv">
-          <tr><th>Mode</th><td id="dbMode">—</td></tr>
-          <tr id="dbFileRow"><th>File</th><td><code id="dbFile">—</code></td></tr>
-          <tr><th>Last saved</th><td id="dbUpdated">—</td></tr>
-        </table>
-        <div class="row">
-          <button class="btn" id="exportBtn" type="button">⬇ Download Excel workbook</button>
-          <button class="btn secondary" id="importBtn" type="button">⬆ Import Excel workbook</button>
-          <input type="file" id="importFile" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden>
-        </div>
-        <div id="importMsg" class="help"></div>
-      </div>
-      <div class="card">
-        <h2>Open from your phone or another computer</h2>
-        <p class="muted" id="accessIntro">Any device can open this address.</p>
-        <table class="kv">
-          <tr><th>This page</th><td><code id="urlCurrent">—</code></td></tr>
-          <tr id="lanRow"><th>Same Wi-Fi / LAN</th><td id="urlLan">—</td></tr>
-          <tr id="publicRow"><th>From anywhere</th><td id="urlPublic">—</td></tr>
-          <tr id="authRow"><th>Login</th><td id="authState">—</td></tr>
-        </table>
-        <div id="accessHelp" class="help"></div>
-      </div>
-    </div>
-    <div class="card" id="staticHelp">
-      <h2>Free hosting (this is how the GitHub Pages copy works)</h2>
-      <ul class="plain steps">
-        <li><strong>No server, no cost.</strong> The page is served as static files, so your progress is kept in this browser's storage and never leaves your device.</li>
-        <li><strong>Moving between devices.</strong> Download the Excel workbook on one device and import it on the other. The workbook is the complete database.</li>
-        <li><strong>Want automatic sync across devices?</strong> Run the same app with its server (free tunnel from your desktop, or a cloud VM) — see the project README.</li>
-      </ul>
-    </div>
-    <div class="card" id="serverHelp">
-      <h2>Three ways to reach it when you are away from your desktop</h2>
-      <ol class="plain steps">
-        <li><strong>Cloud server.</strong> Deploy with one of the scripts in <code>deploy/aws</code>, <code>deploy/azure</code> or <code>deploy/gcp</code>. You get a permanent public address. Set <code>APP_PASSWORD</code> so only you can log in.</li>
-        <li><strong>Tunnel from your desktop (free, 1 minute).</strong> Keep the server running at home and run <code>deploy/tunnel.sh</code>. It opens a public <code>https://…trycloudflare.com</code> link that forwards to this app for as long as the tunnel runs. Set <code>APP_PASSWORD</code> first.</li>
-        <li><strong>Private network (most secure).</strong> Install Tailscale (or any VPN) on the desktop and your phone; then the LAN address above works from anywhere, with no port open to the internet.</li>
-      </ol>
-    </div>
-  </section>
-
 </main>
 
-<footer class="foot" id="foot">
-  Progress is saved to an Excel workbook and mirrored to this browser.
-</footer>
+<footer class="foot" id="foot">Progress syncs to Supabase, so every device shows the same ticks.</footer>
 
-<script src="plan-data.js"></script>
-<script src="xlsx-lite.js"></script>
-<script src="tracker-model.js"></script>
-<script src="app.js"></script>
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════
+// CONFIG — same pattern as the Sylvara chalet system
+// ══════════════════════════════════════════
+const SUPABASE_URL = 'https://vclngjjehuzklezaxygc.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_HGRnIXwlHBvyEQLBlbjAxw_G3YYOmQS';
+const TABLE        = 'cissp_progress';   // created by supabase.sql
+const ROW_ID       = 'default';          // one row per person; change to share one DB with a friend
+const PASS         = '1234';             // change the password here
+
+// ══════════════════════════════════════════
+// PASSWORD GATE (same as the chalet system)
+// ══════════════════════════════════════════
+(function () {
+  if (sessionStorage.getItem('cissp_auth') === PASS) return;
+  document.documentElement.style.visibility = 'hidden';
+  const entered = prompt('🔐 Enter the password:');
+  if (entered === PASS) {
+    sessionStorage.setItem('cissp_auth', PASS);
+    document.documentElement.style.visibility = '';
+  } else {
+    document.documentElement.style.visibility = '';
+    document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:12px;font-family:sans-serif"><div style="font-size:3rem">🔒</div><div style="font-size:1.2rem;font-weight:700">Not authorised</div><button onclick="location.reload()" style="margin-top:12px;padding:10px 24px;background:#0b4f9c;color:#fff;border:0;border-radius:8px;cursor:pointer;font-size:1rem">Try again</button></div>';
+    throw new Error('unauthorised');
+  }
+})();
+
+// ══════════════════════════════════════════
+// THE PLAN (generated from plan.js)
+// ══════════════════════════════════════════
+const PLAN = {"title":"90-Day CISSP Challenge","totalHoursTarget":135,"questionTarget":2000,"checkpoints":[{"name":"Wednesday quiz","minutes":30,"detail":"25 questions on the current domain. No look-ups. Add misses to flashcards."},{"name":"Saturday timed block","minutes":90,"detail":"50 mixed questions from every domain studied to date. Forces cross-domain pattern recognition."},{"name":"Sunday review","minutes":60,"detail":"Re-read every note from the week. No new material. Re-encodes short-term recall into long-term memory."}],"materials":["Official (ISC)² CISSP Study Guide (OSG, current edition) — primary text","One quality question bank: Boson ExSim, Pocket Prep, or the OSG question bank app (2,000+ questions)","Spaced-repetition flashcards: Anki or equivalent","Week-12 refresher: Pete Zerger exam-cram playlist"],"weeks":[{"week":1,"domain":"Domain 1 — Security and Risk Management","weight":"16%","difficulty":"core","summary":"Biggest domain, two weeks. Read OSG Chapter 1 thoroughly and absorb the \"think like a manager\" mindset the rest of the exam expects.","focus":["CIA triad, security governance, policies / standards / procedures / guidelines","Risk management: threat, vulnerability, likelihood, impact, qualitative vs quantitative (ALE = SLE × ARO)","Business continuity: BCM, BIA, RTO, RPO, MTD","Legal, regulatory and compliance; NDA, SLA; (ISC)² Code of Ethics"],"acronyms":["BCM","DRP","BIA","RTO","RPO","MTD","NDA","SLA","ALE","SLE","ARO"],"questionTarget":150},{"week":2,"domain":"Domain 1 — Security and Risk Management (cont.)","weight":"16%","difficulty":"core","summary":"Finish Domain 1. Security awareness, supply-chain risk, threat modelling (STRIDE, PASTA), personnel security.","focus":["Threat modelling: STRIDE, PASTA, attack trees","Supply chain risk management (SCRM), third-party assessment","Personnel security: separation of duties, job rotation, mandatory vacation","Security awareness, education and training programs"],"acronyms":["STRIDE","PASTA","SCRM","DREAD"],"questionTarget":150},{"week":3,"domain":"Domain 2 — Asset Security","weight":"10%","difficulty":"easy","summary":"Shortest domain. Data classification, data lifecycle, data states, retention, destruction, privacy roles. Should feel almost easy after Domain 1.","focus":["Data classification schemes (government vs commercial)","Data lifecycle: create, store, use, share, archive, destroy","Data states: at rest / in transit / in use, and the controls for each","Roles: data owner, data custodian, data processor, data controller, data subject","Sanitisation: clearing, purging, degaussing, destruction"],"acronyms":["DLP","DRM","CASB","GDPR"],"questionTarget":150},{"week":4,"domain":"Domain 3 — Security Architecture and Engineering","weight":"13%","difficulty":"hard","summary":"Consistently the most-failed domain. Security models and the trusted computing base this week; pair every model with a real-world example.","focus":["Bell-LaPadula = military confidentiality (no read up / no write down)","Biba = financial integrity (no read down / no write up)","Clark-Wilson = banking transactions (well-formed transactions, separation of duties)","Brewer-Nash (Chinese Wall) = conflict of interest","TCB, reference monitor, security kernel; Common Criteria EALs","Security capabilities of information systems: memory protection, TPM, HSM, virtualisation"],"acronyms":["BLP","TCB","TPM","HSM","EAL","ICS","SCADA","IoT"],"questionTarget":175},{"week":5,"domain":"Domain 3 — Cryptography (4-5 days)","weight":"13%","difficulty":"hard","summary":"Cryptography deserves 4-5 days on its own. The exam tests specific algorithm strengths, key sizes and use cases.","focus":["Symmetric: AES (128/192/256), 3DES, block vs stream, modes (ECB, CBC, CTR, GCM)","Asymmetric: RSA, ECC, Diffie-Hellman, ElGamal; key sizes and use cases","Hashing: SHA-2, SHA-3, MD5 (deprecated); HMAC; collisions and birthday attacks","PKI: CAs, certificates, CRL vs OCSP, key escrow","Digital signatures, non-repudiation, cryptanalysis attack types","Physical security and site design (CPTED, fire suppression, HVAC)"],"acronyms":["AES","RSA","ECC","DH","PKI","CA","CRL","OCSP","HMAC","CPTED"],"questionTarget":175},{"week":6,"domain":"Domain 4 — Communication and Network Security","weight":"13%","difficulty":"core","summary":"OSI model, TCP/IP, protocols and ports, segmentation, VPNs, wireless, SDN, attack categories. Many questions hinge on which layer an attack or control operates at.","focus":["OSI 7 layers vs TCP/IP 4 layers — memorise what lives at each layer","Common ports: 22, 25, 53, 80, 110, 143, 389/636, 443, 445, 3389","Segmentation: VLANs, DMZ, zero trust, micro-segmentation","VPNs: IPsec (AH/ESP, transport vs tunnel), TLS; wireless: WPA2/WPA3, EAP","SDN basics; attacks by layer (ARP spoofing L2, IP spoofing L3, SYN flood L4)"],"acronyms":["OSI","IPsec","AH","ESP","IKE","SDN","WPA3","EAP","VLAN","DMZ"],"questionTarget":175},{"week":7,"domain":"Domain 5 — Identity and Access Management","weight":"13%","difficulty":"core","summary":"Vocabulary-heavy. Make flashcards for every protocol and standard.","focus":["Authentication factors (something you know / have / are), MFA","SSO and federation: SAML, OAuth 2.0, OpenID Connect, Kerberos, RADIUS, TACACS+","Access control models: DAC, MAC, RBAC, ABAC, rule-based","Identity provisioning lifecycle, access reviews, de-provisioning","Privileged access management, just-in-time access"],"acronyms":["SAML","OAuth","OIDC","RBAC","ABAC","MAC","DAC","PAM","IdP","SP"],"questionTarget":175},{"week":8,"domain":"Domain 6 — Security Assessment and Testing","weight":"12%","difficulty":"core","summary":"Half technical, half governance. Audit strategies, pen-test methodology, vulnerability assessment, log review, code review, breach-attack simulation.","focus":["Audit strategies: internal vs external vs third-party; SOC 1 / SOC 2 (Type I vs II)","Penetration testing phases and rules of engagement; black/grey/white box","Vulnerability assessment vs pen test; CVSS","Log review, synthetic transactions, account management testing","Code review, misuse-case testing, test coverage, breach attack simulation"],"acronyms":["SOC2","CVSS","BAS","KPI","KRI","ROE"],"questionTarget":175},{"week":9,"domain":"Domain 7 — Security Operations","weight":"13%","difficulty":"core","summary":"The single biggest reasoning-style domain. Incident management, patch and change management, BC/DR, physical security, forensics, threat intelligence.","focus":["Incident management steps: detection, response, mitigation, reporting, recovery, remediation, lessons learned","Patch & vulnerability management; change management (CAB)","BC/DR: hot / warm / cold sites, backup types, testing (tabletop → full interruption)","Investigations: digital forensics, evidence handling, chain of custody","Threat intelligence, SIEM, SOAR, logging and monitoring"],"acronyms":["SIEM","SOAR","CAB","MTBF","MTTR","RAID","EDR"],"questionTarget":175},{"week":10,"domain":"Domain 8 — Software Development Security","weight":"10%","difficulty":"hard","summary":"Second consistently-failed domain. Non-developers find it abstract — work more practice questions here than your time budget suggests.","focus":["SDLC models: waterfall, agile, spiral, DevOps / DevSecOps","Security in CI/CD; SAST vs DAST vs IAST vs SCA","OWASP Top 10, secure coding practices, input validation","Database security: inference, aggregation, polyinstantiation","Runtime protection, software acquisition risk, maturity models (CMMI, SAMM)"],"acronyms":["SDLC","SAST","DAST","IAST","SCA","OWASP","CMMI","SAMM","XSS","CSRF"],"questionTarget":200},{"week":11,"domain":"Full-length practice exams","weight":"—","difficulty":"exam","summary":"Where most candidates discover their actual gaps. Two 125-question, 3-hour timed exams under test conditions. Aim for 75 %+ in every domain; below 70 % in any domain → push the exam back 1-2 weeks.","focus":["Sat: practice exam #1 (125 q, 3 h, no phone, no notes, water only) — score by domain","Mon-Fri: 90 min/day re-studying your two weakest domains","Sun: practice exam #2 — aim for 75 %+ across all domains"],"acronyms":[],"questionTarget":250},{"week":12,"domain":"Refresher + rest + exam","weight":"—","difficulty":"exam","summary":"No new material. Watch the exam-cram series, review your own notes, stop early on Friday and sit the exam Saturday morning.","focus":["Mon-Wed (1 h/day): Pete Zerger exam-cram videos, light notes","Thu: review your own domain notes only","Fri: light review, stop by 6 pm, watch Kelly Handerhan \"Why You Will Pass the CISSP\"","Sat morning: sit the exam"],"acronyms":[],"questionTarget":100},{"week":13,"domain":"Buffer (days 85-90)","weight":"—","difficulty":"buffer","summary":"Six spare days. If a domain scored under 70 % in week 11, use these to remediate and retest before sitting the exam. Better to delay 14 days than to fail and wait 30 to retest.","focus":["Remediate any domain under 70 %","One more timed 50-question mixed block","Rest"],"acronyms":[],"questionTarget":0}],"days":[{"day":1,"week":1,"dayName":"Mon","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":2,"week":1,"dayName":"Tue","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":3,"week":1,"dayName":"Wed","tasks":[{"text":"Read 30-40 OSG pages, note every acronym","minutes":60,"type":"study"},{"text":"Wednesday quiz: 25 questions on the current domain, no look-ups (30 min)","minutes":30,"type":"quiz"},{"text":"Add every missed item to flashcards","minutes":10,"type":"review"}]},{"day":4,"week":1,"dayName":"Thu","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":5,"week":1,"dayName":"Fri","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":6,"week":1,"dayName":"Sat","tasks":[{"text":"Saturday timed block: 50 mixed questions from every domain so far (90 min)","minutes":90,"type":"quiz"},{"text":"Review every wrong answer, even the close ones","minutes":30,"type":"review"}]},{"day":7,"week":1,"dayName":"Sun","tasks":[{"text":"Sunday review: re-read every note from this week, no new material (60 min)","minutes":60,"type":"review"}]},{"day":8,"week":2,"dayName":"Mon","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":9,"week":2,"dayName":"Tue","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":10,"week":2,"dayName":"Wed","tasks":[{"text":"Read 30-40 OSG pages, note every acronym","minutes":60,"type":"study"},{"text":"Wednesday quiz: 25 questions on the current domain, no look-ups (30 min)","minutes":30,"type":"quiz"},{"text":"Add every missed item to flashcards","minutes":10,"type":"review"}]},{"day":11,"week":2,"dayName":"Thu","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":12,"week":2,"dayName":"Fri","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":13,"week":2,"dayName":"Sat","tasks":[{"text":"Saturday timed block: 50 mixed questions from every domain so far (90 min)","minutes":90,"type":"quiz"},{"text":"Review every wrong answer, even the close ones","minutes":30,"type":"review"}]},{"day":14,"week":2,"dayName":"Sun","tasks":[{"text":"Sunday review: re-read every note from this week, no new material (60 min)","minutes":60,"type":"review"}]},{"day":15,"week":3,"dayName":"Mon","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":16,"week":3,"dayName":"Tue","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":17,"week":3,"dayName":"Wed","tasks":[{"text":"Read 30-40 OSG pages, note every acronym","minutes":60,"type":"study"},{"text":"Wednesday quiz: 25 questions on the current domain, no look-ups (30 min)","minutes":30,"type":"quiz"},{"text":"Add every missed item to flashcards","minutes":10,"type":"review"}]},{"day":18,"week":3,"dayName":"Thu","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":19,"week":3,"dayName":"Fri","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":20,"week":3,"dayName":"Sat","tasks":[{"text":"Saturday timed block: 50 mixed questions from every domain so far (90 min)","minutes":90,"type":"quiz"},{"text":"Review every wrong answer, even the close ones","minutes":30,"type":"review"}]},{"day":21,"week":3,"dayName":"Sun","tasks":[{"text":"Sunday review: re-read every note from this week, no new material (60 min)","minutes":60,"type":"review"}]},{"day":22,"week":4,"dayName":"Mon","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":23,"week":4,"dayName":"Tue","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":24,"week":4,"dayName":"Wed","tasks":[{"text":"Read 30-40 OSG pages, note every acronym","minutes":60,"type":"study"},{"text":"Wednesday quiz: 25 questions on the current domain, no look-ups (30 min)","minutes":30,"type":"quiz"},{"text":"Add every missed item to flashcards","minutes":10,"type":"review"}]},{"day":25,"week":4,"dayName":"Thu","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":26,"week":4,"dayName":"Fri","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":27,"week":4,"dayName":"Sat","tasks":[{"text":"Saturday timed block: 50 mixed questions from every domain so far (90 min)","minutes":90,"type":"quiz"},{"text":"Review every wrong answer, even the close ones","minutes":30,"type":"review"}]},{"day":28,"week":4,"dayName":"Sun","tasks":[{"text":"Sunday review: re-read every note from this week, no new material (60 min)","minutes":60,"type":"review"}]},{"day":29,"week":5,"dayName":"Mon","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":30,"week":5,"dayName":"Tue","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":31,"week":5,"dayName":"Wed","tasks":[{"text":"Read 30-40 OSG pages, note every acronym","minutes":60,"type":"study"},{"text":"Wednesday quiz: 25 questions on the current domain, no look-ups (30 min)","minutes":30,"type":"quiz"},{"text":"Add every missed item to flashcards","minutes":10,"type":"review"}]},{"day":32,"week":5,"dayName":"Thu","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":33,"week":5,"dayName":"Fri","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":34,"week":5,"dayName":"Sat","tasks":[{"text":"Saturday timed block: 50 mixed questions from every domain so far (90 min)","minutes":90,"type":"quiz"},{"text":"Review every wrong answer, even the close ones","minutes":30,"type":"review"}]},{"day":35,"week":5,"dayName":"Sun","tasks":[{"text":"Sunday review: re-read every note from this week, no new material (60 min)","minutes":60,"type":"review"}]},{"day":36,"week":6,"dayName":"Mon","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":37,"week":6,"dayName":"Tue","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":38,"week":6,"dayName":"Wed","tasks":[{"text":"Read 30-40 OSG pages, note every acronym","minutes":60,"type":"study"},{"text":"Wednesday quiz: 25 questions on the current domain, no look-ups (30 min)","minutes":30,"type":"quiz"},{"text":"Add every missed item to flashcards","minutes":10,"type":"review"}]},{"day":39,"week":6,"dayName":"Thu","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":40,"week":6,"dayName":"Fri","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":41,"week":6,"dayName":"Sat","tasks":[{"text":"Saturday timed block: 50 mixed questions from every domain so far (90 min)","minutes":90,"type":"quiz"},{"text":"Review every wrong answer, even the close ones","minutes":30,"type":"review"}]},{"day":42,"week":6,"dayName":"Sun","tasks":[{"text":"Sunday review: re-read every note from this week, no new material (60 min)","minutes":60,"type":"review"}]},{"day":43,"week":7,"dayName":"Mon","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":44,"week":7,"dayName":"Tue","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":45,"week":7,"dayName":"Wed","tasks":[{"text":"Read 30-40 OSG pages, note every acronym","minutes":60,"type":"study"},{"text":"Wednesday quiz: 25 questions on the current domain, no look-ups (30 min)","minutes":30,"type":"quiz"},{"text":"Add every missed item to flashcards","minutes":10,"type":"review"}]},{"day":46,"week":7,"dayName":"Thu","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":47,"week":7,"dayName":"Fri","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":48,"week":7,"dayName":"Sat","tasks":[{"text":"Saturday timed block: 50 mixed questions from every domain so far (90 min)","minutes":90,"type":"quiz"},{"text":"Review every wrong answer, even the close ones","minutes":30,"type":"review"}]},{"day":49,"week":7,"dayName":"Sun","tasks":[{"text":"Sunday review: re-read every note from this week, no new material (60 min)","minutes":60,"type":"review"}]},{"day":50,"week":8,"dayName":"Mon","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":51,"week":8,"dayName":"Tue","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":52,"week":8,"dayName":"Wed","tasks":[{"text":"Read 30-40 OSG pages, note every acronym","minutes":60,"type":"study"},{"text":"Wednesday quiz: 25 questions on the current domain, no look-ups (30 min)","minutes":30,"type":"quiz"},{"text":"Add every missed item to flashcards","minutes":10,"type":"review"}]},{"day":53,"week":8,"dayName":"Thu","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":54,"week":8,"dayName":"Fri","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":55,"week":8,"dayName":"Sat","tasks":[{"text":"Saturday timed block: 50 mixed questions from every domain so far (90 min)","minutes":90,"type":"quiz"},{"text":"Review every wrong answer, even the close ones","minutes":30,"type":"review"}]},{"day":56,"week":8,"dayName":"Sun","tasks":[{"text":"Sunday review: re-read every note from this week, no new material (60 min)","minutes":60,"type":"review"}]},{"day":57,"week":9,"dayName":"Mon","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":58,"week":9,"dayName":"Tue","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":59,"week":9,"dayName":"Wed","tasks":[{"text":"Read 30-40 OSG pages, note every acronym","minutes":60,"type":"study"},{"text":"Wednesday quiz: 25 questions on the current domain, no look-ups (30 min)","minutes":30,"type":"quiz"},{"text":"Add every missed item to flashcards","minutes":10,"type":"review"}]},{"day":60,"week":9,"dayName":"Thu","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":61,"week":9,"dayName":"Fri","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":62,"week":9,"dayName":"Sat","tasks":[{"text":"Saturday timed block: 50 mixed questions from every domain so far (90 min)","minutes":90,"type":"quiz"},{"text":"Review every wrong answer, even the close ones","minutes":30,"type":"review"}]},{"day":63,"week":9,"dayName":"Sun","tasks":[{"text":"Sunday review: re-read every note from this week, no new material (60 min)","minutes":60,"type":"review"}]},{"day":64,"week":10,"dayName":"Mon","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":65,"week":10,"dayName":"Tue","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":66,"week":10,"dayName":"Wed","tasks":[{"text":"Read 30-40 OSG pages, note every acronym","minutes":60,"type":"study"},{"text":"Wednesday quiz: 25 questions on the current domain, no look-ups (30 min)","minutes":30,"type":"quiz"},{"text":"Add every missed item to flashcards","minutes":10,"type":"review"}]},{"day":67,"week":10,"dayName":"Thu","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":68,"week":10,"dayName":"Fri","tasks":[{"text":"Read 30-40 OSG pages, note every acronym (1.5 h)","minutes":90,"type":"study"},{"text":"Flashcard review (Anki)","minutes":15,"type":"review"}]},{"day":69,"week":10,"dayName":"Sat","tasks":[{"text":"Saturday timed block: 50 mixed questions from every domain so far (90 min)","minutes":90,"type":"quiz"},{"text":"Review every wrong answer, even the close ones","minutes":30,"type":"review"}]},{"day":70,"week":10,"dayName":"Sun","tasks":[{"text":"Sunday review: re-read every note from this week, no new material (60 min)","minutes":60,"type":"review"}]},{"day":71,"week":11,"dayName":"Mon","tasks":[{"text":"Re-study weakest domain #1 (45 min)","minutes":45,"type":"study"},{"text":"Re-study weakest domain #2 (45 min)","minutes":45,"type":"study"}]},{"day":72,"week":11,"dayName":"Tue","tasks":[{"text":"Re-study weakest domain #1 (45 min)","minutes":45,"type":"study"},{"text":"Re-study weakest domain #2 (45 min)","minutes":45,"type":"study"}]},{"day":73,"week":11,"dayName":"Wed","tasks":[{"text":"Re-study weakest domain #1 (45 min)","minutes":45,"type":"study"},{"text":"Re-study weakest domain #2 (45 min)","minutes":45,"type":"study"}]},{"day":74,"week":11,"dayName":"Thu","tasks":[{"text":"Re-study weakest domain #1 (45 min)","minutes":45,"type":"study"},{"text":"Re-study weakest domain #2 (45 min)","minutes":45,"type":"study"}]},{"day":75,"week":11,"dayName":"Fri","tasks":[{"text":"Re-study weakest domain #1 (45 min)","minutes":45,"type":"study"},{"text":"Re-study weakest domain #2 (45 min)","minutes":45,"type":"study"}]},{"day":76,"week":11,"dayName":"Sat","tasks":[{"text":"Practice exam #1: 125 questions, 3 h timed, test conditions","minutes":180,"type":"exam"},{"text":"Score by domain and record the two weakest","minutes":20,"type":"review"}]},{"day":77,"week":11,"dayName":"Sun","tasks":[{"text":"Practice exam #2: 125 questions, 3 h timed — target 75 %+ per domain","minutes":180,"type":"exam"}]},{"day":78,"week":12,"dayName":"Mon","tasks":[{"text":"Watch Pete Zerger exam-cram videos (1 h), light notes","minutes":60,"type":"review"}]},{"day":79,"week":12,"dayName":"Tue","tasks":[{"text":"Watch Pete Zerger exam-cram videos (1 h), light notes","minutes":60,"type":"review"}]},{"day":80,"week":12,"dayName":"Wed","tasks":[{"text":"Watch Pete Zerger exam-cram videos (1 h), light notes","minutes":60,"type":"review"}]},{"day":81,"week":12,"dayName":"Thu","tasks":[{"text":"Review your own domain notes — no new material","minutes":60,"type":"review"}]},{"day":82,"week":12,"dayName":"Fri","tasks":[{"text":"Light review only, stop by 6 pm","minutes":45,"type":"review"},{"text":"Watch Kelly Handerhan \"Why You Will Pass the CISSP\"","minutes":15,"type":"review"}]},{"day":83,"week":12,"dayName":"Sat","tasks":[{"text":"EXAM DAY — sit the CISSP","minutes":240,"type":"exam"}]},{"day":84,"week":12,"dayName":"Sun","tasks":[{"text":"Rest / celebrate","minutes":0,"type":"rest"}]},{"day":85,"week":13,"dayName":"Mon","tasks":[{"text":"Remediate any domain under 70 %, or rest","minutes":60,"type":"study"}]},{"day":86,"week":13,"dayName":"Tue","tasks":[{"text":"Remediate any domain under 70 %, or rest","minutes":60,"type":"study"}]},{"day":87,"week":13,"dayName":"Wed","tasks":[{"text":"Remediate any domain under 70 %, or rest","minutes":60,"type":"study"}]},{"day":88,"week":13,"dayName":"Thu","tasks":[{"text":"Remediate any domain under 70 %, or rest","minutes":60,"type":"study"}]},{"day":89,"week":13,"dayName":"Fri","tasks":[{"text":"Remediate any domain under 70 %, or rest","minutes":60,"type":"study"}]},{"day":90,"week":13,"dayName":"Sat","tasks":[{"text":"Timed 50-question mixed block (if still studying)","minutes":90,"type":"quiz"}]}]};
+
+// ══════════════════════════════════════════
+// APP
+// ══════════════════════════════════════════
+(() => {
+  'use strict';
+
+  const LS_KEY = 'cissp90.progress';
+  const THEME_KEY = 'cissp90.theme';
+  const DAY_MS = 86400000;
+
+  const $ = (sel) => document.querySelector(sel);
+  const el = (tag, attrs = {}, ...children) => {
+    const n = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) {
+      if (k === 'class') n.className = v;
+      else if (k === 'text') n.textContent = v;
+      else if (k.startsWith('on')) n.addEventListener(k.slice(2), v);
+      else n.setAttribute(k, v);
+    }
+    for (const c of children) if (c != null) n.append(c);
+    return n;
+  };
+
+  // ---------- night mode: Auto → Night → Day ----------
+  const THEMES = ['auto', 'dark', 'light'];
+  const THEME_ICON = { auto: '🌗', dark: '🌙', light: '☀️' };
+  const THEME_LABEL = { auto: 'Auto (follows your device)', dark: 'Night mode', light: 'Day mode' };
+  function applyTheme(t) {
+    if (t === 'auto') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', t);
+    const b = $('#themeBtn');
+    b.textContent = THEME_ICON[t];
+    b.title = `${THEME_LABEL[t]} — click to switch`;
+  }
+  function currentTheme() {
+    try { const t = localStorage.getItem(THEME_KEY); return THEMES.includes(t) ? t : 'auto'; } catch { return 'auto'; }
+  }
+  applyTheme(currentTheme());
+  $('#themeBtn').addEventListener('click', () => {
+    const next = THEMES[(THEMES.indexOf(currentTheme()) + 1) % THEMES.length];
+    try { localStorage.setItem(THEME_KEY, next); } catch { /* ignore */ }
+    applyTheme(next);
+  });
+
+  // ---------- state ----------
+  const plan = PLAN;
+  let progress = emptyProgress();
+  let selectedDay = 1;
+  let saveTimer = null;
+  let online = false;
+
+  function emptyProgress() {
+    return { startDate: null, done: {}, completedAt: {}, questions: {}, scores: {}, notes: {}, updatedAt: null };
+  }
+  function normalise(p) {
+    const out = { ...emptyProgress(), ...(p || {}) };
+    out.done ||= {}; out.completedAt ||= {}; out.questions ||= {}; out.scores ||= {}; out.notes ||= {};
+    return out;
+  }
+
+  // ---------- Supabase ----------
+  const db = (typeof supabase !== 'undefined' && SUPABASE_URL && SUPABASE_KEY)
+    ? supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+    : null;
+
+  function setStatus(state) {
+    const s = $('#saveStatus');
+    s.className = 'status ' + (state || '');
+    s.title = state === 'saving' ? 'Saving to Supabase…'
+      : state === 'error' ? 'Supabase unreachable — saved in this browser only, will retry'
+      : state === 'local' ? 'No database configured — progress stays in this browser'
+      : 'Synced with Supabase';
+  }
+
+  function toast(msg, type = '') {
+    const t = $('#toast');
+    t.textContent = msg;
+    t.className = 'toast show ' + type;
+    clearTimeout(toast.timer);
+    toast.timer = setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  function readLocal() {
+    try { return JSON.parse(localStorage.getItem(LS_KEY) || 'null'); } catch { return null; }
+  }
+  function writeLocal() {
+    try { localStorage.setItem(LS_KEY, JSON.stringify(progress)); } catch { /* ignore */ }
+  }
+
+  async function load() {
+    const local = readLocal();
+    if (!db) { progress = normalise(local); setStatus('local'); return; }
+    try {
+      const { data, error } = await db.from(TABLE).select('data, updated_at').eq('id', ROW_ID).maybeSingle();
+      if (error) throw error;
+      online = true;
+      const remote = data ? normalise(data.data) : null;
+      if (remote && local && local.updatedAt && (!remote.updatedAt || local.updatedAt > remote.updatedAt)) {
+        progress = normalise(local);   // this browser saved while offline: push it
+        scheduleSave();
+      } else if (remote) {
+        progress = remote;
+        writeLocal();
+      } else {
+        progress = normalise(local);   // first run: create the row
+        await persist();
+      }
+      setStatus('');
+    } catch (e) {
+      console.error(e);
+      online = false;
+      progress = normalise(local);
+      setStatus('error');
+      toast('⚠️ Could not reach the database — working offline', 'error');
+    }
+  }
+
+  async function persist() {
+    if (!db) return;
+    const { error } = await db.from(TABLE).upsert({ id: ROW_ID, data: progress, updated_at: progress.updatedAt });
+    if (error) throw error;
+  }
+
+  function scheduleSave() {
+    clearTimeout(saveTimer);
+    progress.updatedAt = new Date().toISOString();
+    writeLocal();
+    if (!db) { setStatus('local'); return; }
+    setStatus('saving');
+    saveTimer = setTimeout(async () => {
+      try { await persist(); online = true; setStatus(''); }
+      catch (e) { console.error(e); online = false; setStatus('error'); }
+    }, 600);
+  }
+
+  // Live updates from other devices (needs the realtime line in supabase.sql; harmless if absent).
+  function subscribe() {
+    if (!db) return;
+    try {
+      db.channel('cissp-progress')
+        .on('postgres_changes', { event: '*', schema: 'public', table: TABLE, filter: `id=eq.${ROW_ID}` }, (payload) => {
+          const remote = payload.new && normalise(payload.new.data);
+          if (!remote || !remote.updatedAt || remote.updatedAt <= (progress.updatedAt || '')) return;
+          progress = remote;
+          writeLocal();
+          renderAll();
+          toast('🔄 Updated from another device');
+        })
+        .subscribe();
+    } catch (e) { console.warn('realtime unavailable', e); }
+  }
+
+  // ---------- derived values ----------
+  function todayDay() {
+    if (!progress.startDate) return null;
+    const start = new Date(progress.startDate + 'T00:00:00');
+    const now = new Date(); now.setHours(0, 0, 0, 0);
+    return Math.max(1, Math.min(90, Math.floor((now - start) / DAY_MS) + 1));
+  }
+  function dateForDay(d) {
+    if (!progress.startDate) return null;
+    return new Date(new Date(progress.startDate + 'T00:00:00').getTime() + (d - 1) * DAY_MS);
+  }
+  const fmtDate = (dt) => dt ? dt.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' }) : '—';
+  function isDone(day, idx) { return progress.done[`${day}:${idx}`] === true; }
+  function dayComplete(d) { return d.tasks.every((_, i) => isDone(d.day, i)); }
+  function setDone(day, idx, on) {
+    const k = `${day}:${idx}`;
+    if (on) { progress.done[k] = true; progress.completedAt[k] ||= new Date().toISOString(); }
+    else { delete progress.done[k]; delete progress.completedAt[k]; }
+    scheduleSave(); renderAll();
+  }
+  function totals() {
+    let tasks = 0, done = 0, minutes = 0, questions = 0;
+    for (const d of plan.days) {
+      d.tasks.forEach((t, i) => { tasks++; if (isDone(d.day, i)) { done++; minutes += t.minutes; } });
+      questions += Number(progress.questions[d.day] || 0);
+    }
+    return { tasks, done, hours: Math.round(minutes / 60), questions };
+  }
+
+  // ---------- rendering ----------
+  function renderDash() {
+    const t = totals();
+    const today = todayDay();
+    $('#dayNum').textContent = today ?? '—';
+    $('#dayDate').textContent = today ? `${fmtDate(dateForDay(today))} · week ${Math.min(13, Math.ceil(today / 7))}` : 'Set a start date to begin';
+    const pct = t.tasks ? Math.round((t.done / t.tasks) * 100) : 0;
+    $('#pctDone').textContent = pct;
+    $('#barDone').style.width = pct + '%';
+    $('#qDone').textContent = t.questions.toLocaleString();
+    $('#barQ').style.width = Math.min(100, (t.questions / plan.questionTarget) * 100) + '%';
+    $('#hDone').textContent = t.hours;
+    $('#barH').style.width = Math.min(100, (t.hours / plan.totalHoursTarget) * 100) + '%';
+    $('#startDate').value = progress.startDate || '';
+    $('#examDate').textContent = fmtDate(dateForDay(83));
+  }
+
+  function taskRow(d, i, t) {
+    const done = isDone(d.day, i);
+    const cb = el('input', { type: 'checkbox', onchange: (e) => setDone(d.day, i, e.target.checked) });
+    cb.checked = done;
+    return el('li', { class: done ? 'done' : '' },
+      cb,
+      el('span', { class: 'text', text: t.text }),
+      el('span', { class: 'tag ' + t.type, text: t.minutes ? `${t.minutes} min` : t.type }),
+    );
+  }
+
+  function renderToday() {
+    const d = plan.days[selectedDay - 1];
+    const w = plan.weeks.find((x) => x.week === d.week);
+    const title = $('#todayTitle');
+    const navBtn = (txt, tip, fn) => { const b = el('button', { class: 'tab', text: txt, title: tip, onclick: fn }); b.style.cssText = 'background:var(--surface-alt);color:var(--ink);padding:2px 10px;'; return b; };
+    title.replaceChildren(
+      navBtn('‹', 'Previous day', () => { selectedDay = Math.max(1, selectedDay - 1); renderToday(); }),
+      ` Day ${d.day} · ${d.dayName}${progress.startDate ? ' · ' + fmtDate(dateForDay(d.day)) : ''} `,
+      navBtn('›', 'Next day', () => { selectedDay = Math.min(90, selectedDay + 1); renderToday(); }),
+    );
+    $('#todayDomain').textContent = `Week ${w.week} — ${w.domain} (${w.weight} of the exam)`;
+    $('#todayTasks').replaceChildren(...d.tasks.map((t, i) => taskRow(d, i, t)));
+
+    const q = $('#todayQ');
+    q.value = progress.questions[d.day] ?? '';
+    q.oninput = () => { const n = Math.max(0, Math.min(1000, parseInt(q.value, 10) || 0)); if (n) progress.questions[d.day] = n; else delete progress.questions[d.day]; scheduleSave(); renderDash(); };
+
+    const notes = $('#todayNotes');
+    notes.value = progress.notes[d.day] || '';
+    notes.oninput = () => { if (notes.value.trim()) progress.notes[d.day] = notes.value.slice(0, 4000); else delete progress.notes[d.day]; scheduleSave(); };
+
+    $('#weekFocus').replaceChildren(
+      el('p', { class: 'muted', text: w.summary }),
+      el('ul', { class: 'plain' }, ...w.focus.map((f) => el('li', { text: f }))),
+      w.acronyms.length ? el('div', { class: 'acros' }, ...w.acronyms.map((a) => el('span', { text: a }))) : null,
+      el('p', { class: 'muted', text: w.questionTarget ? `Question target this week: ${w.questionTarget}` : '' }),
+    );
+  }
+
+  function dayCard(d, today) {
+    const card = el('div', { class: 'dayc' + (d.day === today ? ' today' : '') + (dayComplete(d) ? ' complete' : '') },
+      el('div', { class: 'dh' }, el('span', { text: `Day ${d.day}` }), el('small', { text: d.dayName })),
+      ...d.tasks.map((t, i) => {
+        const cb = el('input', { type: 'checkbox', onchange: (e) => setDone(d.day, i, e.target.checked) });
+        cb.checked = isDone(d.day, i);
+        return el('label', {}, cb, el('span', { text: t.text.replace(/\s*\(.*?\)\s*$/, '') }));
+      }),
+    );
+    const q = el('input', { type: 'number', min: 0, max: 1000, placeholder: '0', oninput: (e) => {
+      const n = Math.max(0, Math.min(1000, parseInt(e.target.value, 10) || 0));
+      if (n) progress.questions[d.day] = n; else delete progress.questions[d.day];
+      scheduleSave(); renderDash();
+    } });
+    q.value = progress.questions[d.day] ?? '';
+    card.append(el('div', { class: 'qline' }, 'Qs ', q));
+    return card;
+  }
+
+  function renderPlan() {
+    const today = todayDay();
+    $('#weeks').replaceChildren(...plan.weeks.map((w) => {
+      const days = plan.days.filter((d) => d.week === w.week);
+      const total = days.reduce((a, d) => a + d.tasks.length, 0);
+      const done = days.reduce((a, d) => a + d.tasks.filter((_, i) => isDone(d.day, i)).length, 0);
+      const details = el('details', { class: 'card week' },
+        el('summary', {},
+          el('span', { class: 'wk', text: w.week === 13 ? 'Buffer' : `Week ${w.week}` }),
+          el('span', { class: 'dom', text: w.domain }),
+          el('span', { class: 'diff ' + w.difficulty, text: w.difficulty }),
+          el('span', { class: 'tag', text: w.weight !== '—' ? `weight ${w.weight}` : '' }),
+          el('span', { class: 'wprog', text: `${done}/${total}` }),
+        ),
+        el('div', { class: 'body' },
+          el('div', { class: 'focus' },
+            el('p', { class: 'muted', text: w.summary }),
+            el('ul', {}, ...w.focus.map((f) => el('li', { text: f }))),
+            w.acronyms.length ? el('div', { class: 'acros' }, ...w.acronyms.map((a) => el('span', { text: a }))) : null,
+          ),
+          el('div', { class: 'days' }, ...days.map((d) => dayCard(d, today))),
+        ),
+      );
+      if (today && days.some((d) => d.day === today)) details.open = true;
+      return details;
+    }));
+  }
+
+  function renderCheckpoints() {
+    $('#checkpointCards').replaceChildren(...plan.checkpoints.map((c) =>
+      el('div', { class: 'card cp' }, el('h2', { text: c.name }), el('div', { class: 'mins', text: `${c.minutes} min` }), el('p', { class: 'muted', text: c.detail })),
+    ));
+    const tbody = $('#checkpointTable tbody');
+    tbody.replaceChildren(...plan.weeks.filter((w) => w.week <= 12).map((w) => {
+      const days = plan.days.filter((d) => d.week === w.week);
+      const find = (name, type) => { const d = days.find((x) => x.dayName === name); if (!d) return null; const i = d.tasks.findIndex((t) => t.type === type || (type === 'quiz' && t.type === 'exam')); return i < 0 ? null : isDone(d.day, i); };
+      const cell = (v) => el('td', { class: v === null ? 'miss' : v ? 'ok' : 'miss', text: v === null ? 'n/a' : v ? '✓' : '—' });
+      const q = days.reduce((a, d) => a + Number(progress.questions[d.day] || 0), 0);
+      return el('tr', {}, el('td', { text: `Week ${w.week}` }), cell(find('Wed', 'quiz')), cell(find('Sat', 'quiz')), cell(find('Sun', 'review')), el('td', { text: w.questionTarget ? `${q} / ${w.questionTarget}` : String(q) }));
+    }));
+  }
+
+  const DOMAINS = [
+    ['d1', 'D1 Security & Risk Management', '16%'],
+    ['d2', 'D2 Asset Security', '10%'],
+    ['d3', 'D3 Security Architecture & Engineering', '13%'],
+    ['d4', 'D4 Communication & Network Security', '13%'],
+    ['d5', 'D5 Identity & Access Management', '13%'],
+    ['d6', 'D6 Security Assessment & Testing', '12%'],
+    ['d7', 'D7 Security Operations', '13%'],
+    ['d8', 'D8 Software Development Security', '10%'],
+  ];
+
+  function renderExams() {
+    const tbody = $('#examTable tbody');
+    let anyLow = false;
+    const avgs = { e1: [], e2: [] };
+    tbody.replaceChildren(...DOMAINS.map(([key, name, weight]) => {
+      const cells = ['e1', 'e2'].map((ex) => {
+        const k = `${ex}_${key}`;
+        const v = progress.scores[k];
+        if (v !== undefined) { avgs[ex].push(v); if (v < 70) anyLow = true; }
+        const input = el('input', { type: 'number', min: 0, max: 100, placeholder: '%', oninput: (e) => {
+          const n = e.target.value === '' ? undefined : Math.max(0, Math.min(100, Number(e.target.value)));
+          if (n === undefined || Number.isNaN(n)) delete progress.scores[k]; else progress.scores[k] = n;
+          scheduleSave(); renderExams();
+        } });
+        input.value = v ?? '';
+        return el('td', { class: v === undefined ? '' : v < 70 ? 'low' : v >= 75 ? 'good' : '' }, input);
+      });
+      return el('tr', {}, el('td', { text: name }), el('td', { text: weight }), ...cells);
+    }));
+    const avg = (a) => a.length ? (a.reduce((x, y) => x + y, 0) / a.length).toFixed(1) + ' %' : '—';
+    $('#exam1Avg').textContent = `Exam #1 avg: ${avg(avgs.e1)}`;
+    $('#exam2Avg').textContent = `Exam #2 avg: ${avg(avgs.e2)}`;
+    $('#examWarn').classList.toggle('hidden', !anyLow);
+    $('#materials').replaceChildren(...plan.materials.map((m) => el('li', { text: m })));
+  }
+
+  function renderAll() { renderDash(); renderToday(); renderPlan(); renderCheckpoints(); renderExams(); }
+
+  // ---------- wiring ----------
+  $('#tabs').addEventListener('click', (e) => {
+    const b = e.target.closest('.tab'); if (!b) return;
+    document.querySelectorAll('#tabs .tab').forEach((t) => t.classList.toggle('active', t === b));
+    document.querySelectorAll('.view').forEach((v) => v.classList.toggle('hidden', v.id !== 'view-' + b.dataset.view));
+    window.scrollTo({ top: 0 });
+  });
+
+  $('#startDate').addEventListener('change', (e) => {
+    progress.startDate = e.target.value || null;
+    selectedDay = todayDay() || 1;
+    scheduleSave(); renderAll();
+  });
+
+  // Retry a failed save when the connection comes back.
+  window.addEventListener('online', () => { if (db && !online) scheduleSave(); });
+
+  load().then(() => { selectedDay = todayDay() || 1; renderAll(); subscribe(); });
+})();
+</script>
 </body>
 </html>
