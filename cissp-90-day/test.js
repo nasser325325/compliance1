@@ -94,8 +94,12 @@ async function main() {
   // the database is a real Excel workbook
   const xlsxPath = path.join(dataDir, 'cissp-tracker.xlsx');
   assert.ok(fs.existsSync(xlsxPath), 'workbook written');
-  const { readWorkbook, writeWorkbook } = require('./xlsx-lite');
-  let sheets = readWorkbook(fs.readFileSync(xlsxPath));
+  const zlib = require('zlib');
+  const xl = require('./xlsx-lite');
+  const inflate = (u8) => new Uint8Array(zlib.inflateRawSync(u8));
+  const readWorkbook = (b) => xl.readWorkbook(new Uint8Array(b), { inflate });
+  const writeWorkbook = (s) => Buffer.from(xl.writeWorkbook(s, { deflate: (u8) => new Uint8Array(zlib.deflateRawSync(u8)) }));
+  let sheets = await readWorkbook(fs.readFileSync(xlsxPath));
   assert.deepStrictEqual(sheets.map((s) => s.name), ['Settings', 'Tasks', 'Questions', 'Scores', 'Notes']);
   const tasks = sheets[1].rows;
   assert.strictEqual(tasks[0][7], 'Done');
@@ -107,7 +111,7 @@ async function main() {
   assert.strictEqual((await r.json()).completedAt['1:0'], again.completedAt['1:0']);
 
   // edit the workbook "in Excel" (tick day 2 task 1, type a note, enter a score) → the app picks it up
-  sheets = readWorkbook(fs.readFileSync(xlsxPath));
+  sheets = await readWorkbook(fs.readFileSync(xlsxPath));
   const t = sheets.find((s) => s.name === 'Tasks');
   const row = t.rows.find((rw) => rw[0] === 2 && rw[3] === 1); row[7] = 'yes';
   const n = sheets.find((s) => s.name === 'Notes'); n.rows.find((rw) => rw[0] === 5)[1] = 'typed in Excel';
@@ -125,8 +129,35 @@ async function main() {
   assert.strictEqual(r.status, 200);
   assert.ok(r.headers.get('content-type').includes('spreadsheetml'));
   assert.ok(r.headers.get('content-disposition').includes('.xlsx'));
-  const dl = readWorkbook(Buffer.from(await r.arrayBuffer()));
+  const dl = await readWorkbook(Buffer.from(await r.arrayBuffer()));
   assert.strictEqual(dl.length, 5);
+
+  // import: an uncompressed workbook (what the browser build produces) replaces the database
+  const uncompressed = Buffer.from(xl.writeWorkbook(sheets)); // no deflate -> stored entries
+  const sc2 = sheets.find((s) => s.name === 'Scores'); sc2.rows.find((rw) => rw[0] === 1 && rw[1] === 'd1')[3] = 88;
+  r = await fetch(`${base}/api/import`, { method: 'POST', headers: auth, body: Buffer.from(xl.writeWorkbook(sheets)) });
+  assert.strictEqual(r.status, 200, 'import ok');
+  const imported = await r.json();
+  assert.strictEqual(imported.scores.e1_d1, 88);
+  assert.strictEqual(imported.done['2:0'], true);
+  assert.strictEqual(imported.completedAt['1:0'], again.completedAt['1:0'], 'import keeps the file\'s completion times');
+  r = await fetch(`${base}/api/import`, { method: 'POST', headers: auth, body: 'garbage' });
+  assert.strictEqual(r.status, 400);
+  assert.ok(uncompressed.length > 0);
+
+  // the static build in public/ must match the sources it was generated from
+  for (const f of ['xlsx-lite.js', 'tracker-model.js']) {
+    assert.strictEqual(fs.readFileSync(path.join(__dirname, 'public', f), 'utf8'), fs.readFileSync(path.join(__dirname, f), 'utf8'), `public/${f} is stale — run node build-static.js`);
+  }
+  const planData = fs.readFileSync(path.join(__dirname, 'public', 'plan-data.js'), 'utf8');
+  assert.ok(planData.includes(JSON.stringify(require('./plan'))), 'public/plan-data.js is stale — run node build-static.js');
+  r = await fetch(`${base}/plan-data.js`, { headers: auth });
+  assert.strictEqual(r.status, 200);
+  for (const f of fs.readdirSync(path.join(__dirname, 'public'))) {
+    const pagesCopy = path.join(__dirname, '..', 'cissp', f);
+    assert.ok(fs.existsSync(pagesCopy), `cissp/${f} missing — run node build-static.js`);
+    assert.ok(fs.readFileSync(pagesCopy).equals(fs.readFileSync(path.join(__dirname, 'public', f))), `cissp/${f} is stale — run node build-static.js`);
+  }
 
   // server info for remote access
   r = await fetch(`${base}/api/info`, { headers: auth });

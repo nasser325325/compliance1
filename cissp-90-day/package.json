@@ -9,6 +9,7 @@
   },
   "scripts": {
     "start": "node server.js",
+    "build": "node build-static.js",
     "test": "node test.js"
   },
   "license": "MIT"

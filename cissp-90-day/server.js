@@ -11,7 +11,12 @@
  *   GET  /api/progress      saved progress (read from the Excel workbook)
  *   PUT  /api/progress      save progress (JSON body, max 256 KB) → written to the workbook
  *   GET  /api/export.xlsx   download the Excel database
+ *   POST /api/import        upload a tracker workbook (.xlsx body, max 4 MB) and make it the database
  *   GET  /api/info          server info: LAN addresses for opening on a phone, data file path
+ *
+ * The same public/ folder also runs with no server at all (GitHub Pages): the UI
+ * then keeps progress in the browser and builds the Excel workbook client-side.
+ * Run `node build-static.js` after changing plan.js, xlsx-lite.js or tracker-model.js.
  *   GET  /healthz           liveness probe for load balancers / Cloud Run / App Service
  *
  * Environment variables
@@ -72,20 +77,20 @@ function send(res, status, body, type = 'application/json; charset=utf-8') {
   res.end(payload);
 }
 
-function readBody(req) {
+function readBody(req, limit = MAX_BODY) {
   return new Promise((resolve, reject) => {
     const chunks = [];
     let size = 0;
     req.on('data', (c) => {
       size += c.length;
-      if (size > MAX_BODY) {
+      if (size > limit) {
         reject(Object.assign(new Error('payload too large'), { status: 413 }));
         req.destroy();
         return;
       }
       chunks.push(c);
     });
-    req.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
+    req.on('end', () => resolve(Buffer.concat(chunks)));
     req.on('error', reject);
   });
 }
@@ -107,9 +112,9 @@ function authorized(req) {
   return timingSafeEqual(pass, APP_PASSWORD);
 }
 
-function loadProgress() {
+async function loadProgress() {
   try {
-    return store.load();
+    return await store.load();
   } catch (e) {
     console.error('[cissp-90-day] could not read workbook, starting empty:', e.message);
     return emptyProgress();
@@ -220,9 +225,21 @@ async function handle(req, res) {
   if (p === '/api/plan' && req.method === 'GET') return send(res, 200, PLAN);
   if (p === '/api/info' && req.method === 'GET') return send(res, 200, serverInfo(req));
 
+  if (p === '/api/import' && req.method === 'POST') {
+    try {
+      const bytes = await readBody(req, 4 * 1024 * 1024);
+      const parsed = await Store.parse(bytes);
+      const clean = sanitizeProgress(parsed, parsed); // keep the file's own completion times
+      saveProgress(clean);
+      return send(res, 200, clean);
+    } catch (e) {
+      return send(res, e.status || 400, { error: e.status ? e.message : 'not a valid tracker workbook: ' + e.message });
+    }
+  }
+
   if (p === '/api/export.xlsx' && req.method === 'GET') {
     try {
-      const buf = store.exportBuffer();
+      const buf = await store.exportBuffer();
       securityHeaders(res);
       res.writeHead(200, {
         'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -236,16 +253,16 @@ async function handle(req, res) {
   }
 
   if (p === '/api/progress') {
-    if (req.method === 'GET') return send(res, 200, loadProgress());
+    if (req.method === 'GET') return send(res, 200, await loadProgress());
     if (req.method === 'PUT') {
       let body;
       try {
-        body = JSON.parse(await readBody(req));
+        body = JSON.parse((await readBody(req)).toString('utf8'));
       } catch (e) {
         return send(res, e.status || 400, { error: e.status ? e.message : 'invalid JSON' });
       }
       try {
-        const clean = sanitizeProgress(body, loadProgress());
+        const clean = sanitizeProgress(body, await loadProgress());
         saveProgress(clean);
         return send(res, 200, clean);
       } catch (e) {

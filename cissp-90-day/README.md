@@ -1,26 +1,64 @@
 # 90-Day CISSP Challenge — web server
 
-A small, self-hosted web app that turns the 90-day CISSP study plan into a daily
-tracker, plus step-by-step instructions to run it on **AWS**, **Azure** and
-**Google Cloud**. Deploying it is itself a hands-on lab for several CISSP domains
+A small web app that turns the 90-day CISSP study plan into a daily tracker. It
+runs two ways from the same code:
+
+| | Free static hosting (**GitHub Pages**) | With its Node server (VM, container, or your desktop) |
+|---|---|---|
+| Cost | free | free tier on most clouds, or your own PC |
+| Setup | enable Pages once, nothing else | one script per cloud, see Step 3 |
+| Progress stored | in the browser of each device | in an Excel workbook on the server, shared by every device |
+| Excel database | built in the browser: download / import | written on every save, download / import, editable in Excel |
+| Night mode, plan, checkpoints, exams | ✓ | ✓ |
+
+Deploying the server version is itself a hands-on lab for several CISSP domains
 (network segmentation, least privilege, hardening, logging).
 
 ```
-cissp-90-day/
-├── server.js            zero-dependency Node.js web server + JSON API
-├── plan.js              the 90-day plan as data (13 weeks, 90 days, every task)
-├── store.js             Excel-backed database (data/cissp-tracker.xlsx)
-├── xlsx-lite.js         tiny .xlsx reader/writer built on Node's zlib (no npm packages)
-├── public/              tracker UI (index.html, styles.css, app.js)
-├── test.js              smoke test (npm test)
-├── Dockerfile           container image for App Runner / Container Apps / Cloud Run
-└── deploy/
-    ├── cloud-init.sh    one bootstrap script that works on all three clouds' VMs
-    ├── tunnel.sh        expose the desktop server to your phone via a free Cloudflare tunnel
-    ├── aws/             deploy-ec2.sh + README (EC2 and App Runner)
-    ├── azure/           deploy-vm.sh  + README (VM and Container Apps)
-    └── gcp/             deploy-gce.sh + README (Compute Engine and Cloud Run)
+compliance1/
+├── cissp/               ← the GitHub Pages copy (generated, do not edit): https://<you>.github.io/compliance1/cissp/
+└── cissp-90-day/
+    ├── server.js            zero-dependency Node.js web server + JSON API
+    ├── plan.js              the 90-day plan as data (13 weeks, 90 days, every task)
+    ├── store.js             Excel-backed database (data/cissp-tracker.xlsx)
+    ├── tracker-model.js     workbook layout, shared by server and browser
+    ├── xlsx-lite.js         tiny .xlsx reader/writer, works in Node and the browser (no npm packages)
+    ├── build-static.js      regenerates public/plan-data.js, the library copies and ../cissp/
+    ├── public/              tracker UI (index.html, styles.css, app.js + generated files)
+    ├── test.js              smoke test (npm test)
+    ├── Dockerfile           container image for App Runner / Container Apps / Cloud Run
+    └── deploy/
+        ├── cloud-init.sh    one bootstrap script that works on all three clouds' VMs
+        ├── tunnel.sh        expose the desktop server to your phone via a free Cloudflare tunnel
+        ├── aws/             deploy-ec2.sh + README (EC2 and App Runner)
+        ├── azure/           deploy-vm.sh  + README (VM and Container Apps)
+        └── gcp/             deploy-gce.sh + README (Compute Engine and Cloud Run)
 ```
+
+## Step 0 — Free hosting on GitHub Pages (recommended start)
+
+The `cissp/` folder at the repository root is a ready-to-serve static copy of the
+app. GitHub Pages serves it for free at
+
+```
+https://nasser325325.github.io/compliance1/cissp/
+```
+
+Enable it once (the root `index.html`, the ARB compliance tracker, is served at
+`https://nasser325325.github.io/compliance1/` by the same setting):
+
+1. Merge this branch into `main` (or push `main` with the `cissp/` folder in it).
+2. On GitHub open **Settings → Pages**.
+3. Under **Build and deployment** choose **Source: Deploy from a branch**,
+   branch **main**, folder **/ (root)**. Save.
+4. Wait a minute, then open the address above. Add it to your phone's home
+   screen for an app-like icon.
+
+In this mode there is no server: progress is stored in that browser, and the
+**Download / Import Excel workbook** buttons on the Data & Access tab move it
+between devices (the workbook is the complete database). After changing anything
+in `cissp-90-day/`, run `npm run build` to refresh `cissp/` and commit it; the
+test suite fails if the copy is stale.
 
 ## What the tracker does
 
@@ -46,9 +84,11 @@ loses a tick.
 
 ## The Excel database
 
-The server's only data store is a real workbook, `data/cissp-tracker.xlsx`,
-written atomically on every save and read back on every load. No npm packages:
-`xlsx-lite.js` builds and parses the file with Node's built-in zlib.
+The data store is a real workbook. In server mode it is `data/cissp-tracker.xlsx`,
+written atomically on every save and read back on every load; in static mode the
+same workbook is built in the browser when you press Download and parsed when you
+Import. No npm packages: `xlsx-lite.js` builds and parses the file itself
+(Node's zlib on the server, the browser's DecompressionStream on the page).
 
 | Sheet | Columns |
 |-------|---------|
@@ -60,14 +100,17 @@ written atomically on every save and read back on every load. No npm packages:
 
 Because every day and task is already a row, the workbook works as a checklist on
 its own: open it in Excel, set **Done** to `TRUE` (or `yes`, `x`, `1`), type a
-note or a score, save, and the web app shows the change on its next load. The
-**Download Excel workbook** button on the Data & Access tab fetches the current
-file; a v1 `progress.json` is migrated into the workbook automatically.
+note or a score, save, and either import it (both modes) or just reload (server
+mode reads the file on every load). The Data & Access tab has **Download** and
+**Import** buttons; a v1 `progress.json` is migrated into the workbook
+automatically in server mode.
 
 ## Opening it when you are away from your desktop
 
-The Data & Access tab shows the live addresses. Three options, from simplest to
-most private:
+The GitHub Pages address (Step 0) already works from any device; each device
+keeps its own progress, carried across with the Excel workbook. For one shared,
+automatically synced copy you need the server version. The Data & Access tab
+shows the live addresses. Three options, from simplest to most private:
 
 1. **Cloud server** — deploy with any script in `deploy/` (Step 3 below). You get
    a permanent public URL. Always set `APP_PASSWORD`.
